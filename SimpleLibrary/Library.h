@@ -14,12 +14,13 @@ public:
 
 	void initLibrary();
 	void loadData(std::string path);
-	void saveData();
+	void saveData(std::string path);
 
 	void printBooks();
 
 	Book getBook(int position);
 	Book getBook(std::string bookName);
+	Book getBook(std::string authorName);
 
 private:
 	std::vector<Book> books;

@@ -39,8 +39,25 @@ void Library::loadData(std::string path)
 	}
 }
 
-void Library::saveData()
+void Library::saveData(std::string path)
 {
+	std::string name, author;
+	int pub_year;
+	bool borrowed;
+
+	std::string line;
+	std::ofstream dataFile(path);
+
+	for (auto& book : books) {
+		name = book.getName();
+		author = book.getAuthor();
+		pub_year = book.getPubYear();
+		borrowed = book.getBorrowed();
+
+		line = name + "||" + author + "||" + std::to_string(pub_year) + "||" + std::to_string(borrowed) + "\n";
+
+		dataFile << line;
+	}
 }
 
 void Library::printBooks()
@@ -62,4 +79,8 @@ Book Library::getBook(std::string bookName)
 			return book;
 		}
 	}
+}
+
+Book Library::getBook(std::string authorName) {
+
 }
