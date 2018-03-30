@@ -1,12 +1,5 @@
 #include "stdafx.h"
 #include "Library.h"
-#include "Book.h"
-#include <vector>
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <string>
-#include <algorithm>
 
 
 Library::Library()
@@ -22,6 +15,9 @@ void Library::initLibrary()
 {
 }
 
+/*	Load data from text file to vector. Data must be in format
+	BOOK_NAME|AUTHOR_NAME|PUBLISHING_YEAR|BORROWED
+*/
 void Library::loadData(std::string path)
 {
 	std::string line;
@@ -32,9 +28,6 @@ void Library::loadData(std::string path)
 	std::string name, author;
 	int pub_year;
 	bool borrowed;
-	
-	size_t pos;
-	std::string token;
 
 	if (dataFile.is_open()) {
 		while (std::getline(dataFile, line)) {
@@ -48,4 +41,25 @@ void Library::loadData(std::string path)
 
 void Library::saveData()
 {
+}
+
+void Library::printBooks()
+{
+	for (auto& book : books) {
+		std::cout << book.getName() << " || " << book.getAuthor() << " || " << book.getPubYear() << " || " << book.getBorrowed();
+	}
+}
+
+Book Library::getBook(int position)
+{
+	return books[position];
+}
+
+Book Library::getBook(std::string bookName)
+{
+	for (auto& book : books) {
+		if (book.getName() == bookName) {
+			return book;
+		}
+	}
 }
