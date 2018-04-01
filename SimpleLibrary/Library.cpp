@@ -20,28 +20,47 @@ void Library::initLibrary()
 */
 void Library::loadData(std::string path)
 {
-	std::string line;
 	std::ifstream dataFile(path);
-
 	std::string delimeter = "||";
+	std::string line;
+	std::string tokens[4];
 
-	std::string name, author;
-	int pub_year;
+	std::string bookName, authorName;
+	int pubYear;
 	bool borrowed;
 
 	if (dataFile.is_open()) {
-		while (std::getline(dataFile, line)) {
-			std::istringstream lineFromFile(line);
-			lineFromFile >> name >> author >> pub_year >> borrowed;
-			Book book(name, author, pub_year, borrowed);
-			books.push_back(book);
+		std::getline(dataFile, line);
+		auto start = 0U;
+		auto end = line.find(delimeter);
+		int pos = 0;
+
+		while (end != std::string::npos) {
+			tokens[pos] = line.substr(start, end - start);
+			start = end + delimeter.length();
+			end = line.find(delimeter, start);
+			pos++;
 		}
+
+		bookName = tokens[0];
+		authorName = tokens[1];
+		pubYear = std::stoi(tokens[2]);
+		
+		if (tokens[3] == "1") {
+			borrowed = true;
+		}
+		else {
+			borrowed = false;
+		}
+
+		Book book(bookName, authorName, pubYear, borrowed);
+		books.push_back(book);
 	}
 }
 
 void Library::saveData(std::string path)
 {
-	std::string name, author;
+	std::string name, author, bookBorrowed;
 	int pub_year;
 	bool borrowed;
 
@@ -54,7 +73,9 @@ void Library::saveData(std::string path)
 		pub_year = book.getPubYear();
 		borrowed = book.getBorrowed();
 
-		line = name + "||" + author + "||" + std::to_string(pub_year) + "||" + std::to_string(borrowed) + "\n";
+		bookBorrowed = (borrowed) ? "1" : "0";
+
+		line = name + "||" + author + "||" + std::to_string(pub_year) + "||" + bookBorrowed + "\n";
 
 		dataFile << line;
 	}
@@ -63,7 +84,7 @@ void Library::saveData(std::string path)
 void Library::printBooks()
 {
 	for (auto& book : books) {
-		std::cout << book.getName() << " || " << book.getAuthor() << " || " << book.getPubYear() << " || " << book.getBorrowed();
+		std::cout << book.getName() << " || " << book.getAuthor() << " || " << book.getPubYear() << " || " << book.getBorrowed() << std::endl;
 	}
 }
 
@@ -81,6 +102,13 @@ Book Library::getBook(std::string bookName)
 	}
 }
 
-Book Library::getBook(std::string authorName) {
-
+std::vector<Book> Library::getBooksByAuthor(std::string authorName)
+{
+	std::vector<Book> authorVector;
+	for (auto& book : books) {
+		if (book.getAuthor() == authorName) {
+			authorVector.push_back(book);
+		}
+	}
+	return authorVector;
 }

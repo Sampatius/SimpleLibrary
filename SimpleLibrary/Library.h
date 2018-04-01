@@ -20,7 +20,7 @@ public:
 
 	Book getBook(int position);
 	Book getBook(std::string bookName);
-	Book getBook(std::string authorName);
+	std::vector<Book> getBooksByAuthor(std::string authorName);
 
 private:
 	std::vector<Book> books;
