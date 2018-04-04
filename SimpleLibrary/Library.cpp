@@ -11,12 +11,8 @@ Library::~Library()
 {
 }
 
-void Library::initLibrary()
-{
-}
-
 /*	Load data from text file to vector. Data must be in format
-	BOOK_NAME|AUTHOR_NAME|PUBLISHING_YEAR|BORROWED
+	BOOK_NAME||AUTHOR_NAME||PUBLISHING_YEAR||BORROWED||
 */
 void Library::loadData(std::string path)
 {
@@ -30,34 +26,37 @@ void Library::loadData(std::string path)
 	bool borrowed;
 
 	if (dataFile.is_open()) {
-		std::getline(dataFile, line);
-		auto start = 0U;
-		auto end = line.find(delimeter);
-		int pos = 0;
+		while (std::getline(dataFile, line)) {
+			auto start = 0U;
+			auto end = line.find(delimeter);
+			int pos = 0;
 
-		while (end != std::string::npos) {
-			tokens[pos] = line.substr(start, end - start);
-			start = end + delimeter.length();
-			end = line.find(delimeter, start);
-			pos++;
-		}
+			while (end != std::string::npos) {
+				tokens[pos] = line.substr(start, end - start);
+				start = end + delimeter.length();
+				end = line.find(delimeter, start);
+				pos++;
+			}
 
-		bookName = tokens[0];
-		authorName = tokens[1];
-		pubYear = std::stoi(tokens[2]);
-		
-		if (tokens[3] == "1") {
-			borrowed = true;
-		}
-		else {
-			borrowed = false;
-		}
+			bookName = tokens[0];
+			authorName = tokens[1];
+			pubYear = std::stoi(tokens[2]);
 
-		Book book(bookName, authorName, pubYear, borrowed);
-		books.push_back(book);
+			if (tokens[3] == "1") {
+				borrowed = true;
+			}
+			else {
+				borrowed = false;
+			}
+
+			Book book(bookName, authorName, pubYear, borrowed);
+			books.push_back(book);
+		}
+		dataFile.close();
 	}
 }
 
+/* Save data to file in format BOOK_NAME||AUTHOR_NAME||PUBLISHING_YEAR||BORROWED|| */
 void Library::saveData(std::string path)
 {
 	std::string name, author, bookBorrowed;
@@ -81,18 +80,24 @@ void Library::saveData(std::string path)
 	}
 }
 
+/* Print books, mainly used for debugging at the moment*/
 void Library::printBooks()
 {
+	std::string borrowed;
+
 	for (auto& book : books) {
-		std::cout << book.getName() << " || " << book.getAuthor() << " || " << book.getPubYear() << " || " << book.getBorrowed() << std::endl;
+		borrowed = (book.getBorrowed()) ? "Borrowed" : "Available";
+		std::cout << book.getName() << " || " << book.getAuthor() << " || " << book.getPubYear() << " || " << borrowed << std::endl;
 	}
 }
 
+/* Get book by it's position in vector */
 Book Library::getBook(int position)
 {
 	return books[position];
 }
 
+/* Get book from vector by it's name */
 Book Library::getBook(std::string bookName)
 {
 	for (auto& book : books) {
@@ -102,6 +107,7 @@ Book Library::getBook(std::string bookName)
 	}
 }
 
+/* Get multiple books from vector by author's name */
 std::vector<Book> Library::getBooksByAuthor(std::string authorName)
 {
 	std::vector<Book> authorVector;
@@ -111,4 +117,22 @@ std::vector<Book> Library::getBooksByAuthor(std::string authorName)
 		}
 	}
 	return authorVector;
+}
+
+/* Sort by name */
+void Library::sortByName()
+{
+	std::sort(books.begin(), books.end(), [](Book& lhs, Book& rhs) { return lhs.getName() < rhs.getName(); });
+}
+
+/* Sort by author */
+void Library::sortByAuthor()
+{
+	std::sort(books.begin(), books.end(), [](Book& lhs, Book& rhs) { return lhs.getAuthor() < rhs.getAuthor(); });
+}
+
+/* Sort by year */
+void Library::sortByYear()
+{
+	std::sort(books.begin(), books.end(), [](Book& lhs, Book& rhs) { return lhs.getPubYear() < rhs.getPubYear(); });
 }

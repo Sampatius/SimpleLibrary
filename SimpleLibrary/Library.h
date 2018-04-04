@@ -12,7 +12,6 @@ public:
 	Library();
 	~Library();
 
-	void initLibrary();
 	void loadData(std::string path);
 	void saveData(std::string path);
 
@@ -21,6 +20,10 @@ public:
 	Book getBook(int position);
 	Book getBook(std::string bookName);
 	std::vector<Book> getBooksByAuthor(std::string authorName);
+
+	void sortByName();
+	void sortByAuthor();
+	void sortByYear();
 
 private:
 	std::vector<Book> books;
